@@ -30,7 +30,6 @@ async function main() {
     await fetchAndProcessReposInPage(query, page, accessToken);
 
   } catch (error) {
-    hasError = true; // Define hasError como true se ocorrer um erro
     console.error('Erro durante a execução principal:', error);
 
   } finally {
