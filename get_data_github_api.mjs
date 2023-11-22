@@ -58,6 +58,16 @@ async function connect() {
   console.log('Conectado ao banco de dados PostgreSQL');
 }
 
+async function disconnect() {
+  try {
+    await client.end();
+    console.log('Desconectado do banco de dados PostgreSQL');
+  } catch (error) {
+    console.error('Erro ao desconectar do banco de dados PostgreSQL', error);
+    throw error;
+  }
+}
+
 async function insertData(data, tableName) {
   let sql_query;
 
@@ -105,16 +115,6 @@ async function insertData(data, tableName) {
     console.error(`Consulta: ${sql_query}`);
     console.error('Código de erro: ', error.code);
     console.error('Detalhes do erro:', error.detail);
-    throw error;
-  }
-}
-
-async function disconnect() {
-  try {
-    await client.end();
-    console.log('Desconectado do banco de dados PostgreSQL');
-  } catch (error) {
-    console.error('Erro ao desconectar do banco de dados PostgreSQL', error);
     throw error;
   }
 }
