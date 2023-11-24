@@ -5,11 +5,11 @@ import moment from 'moment';
 import fetch from 'node-fetch';
 import fs from 'fs';
 
-const accessToken = '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'; // Substitua pelo seu token de autenticação do GitHub
-const page = 4
-const perPage = 100
-const startDate = '2021-02-01'; // formato YYYY-MM-DD
-const endDate = '2021-03-01';   // formato YYYY-MM-DD
+const accessToken = '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'; // Substitua pelo seu token de autenticação do GitHub
+const page = 1;
+const perPage = 100;
+const startDate = '2021-03-01'; // formato YYYY-MM-DD
+const endDate = '2021-04-01';   // formato YYYY-MM-DD
 
 const query = `q=is:public created:${startDate}..${endDate}&sort=created&order=asc&per_page=${perPage}&page=${page}`;
 let client;
@@ -50,7 +50,7 @@ async function connect() {
     host: 'localhost',
     database: 'github_api',
     password: 'postgres',
-    port: 5432,
+    port: 5432
   });
 
   await client.connect();
@@ -71,7 +71,7 @@ async function insertData(data, tableName) {
   let sql_query;
 
   try {
-    const fields = Object.keys(data).join(', ');
+    const fields = Object.keys(data).join(', '); 
     const values = Object.values(data).map(value => {
       // Tratamento especial para arrays
       if (Array.isArray(value)) {
@@ -140,7 +140,7 @@ async function fetchPullRequestsData(owner, repoName) {
 }
 
 async function fetchPullRequestCommits(owner, repo, pullNumber) {
-  const perPage = 5; // Limita a 10 commits por página
+  const perPage = 5; // Limita a 5 commits por página
   const page = 1; // Começando na primeira página
   const apiVersion = '2022-11-28';
 
@@ -267,7 +267,6 @@ async function fetchAndProcessSingleRepo(repo) {
     console.log(`Nome do Repositório: ${repositoryName}`);
     console.log(`Login do Proprietário: ${repositoryOwner}`);
     console.log('-------------------------------------------');
-    
     
     // Criar o array para coletar as informações de login dos usuário
     const users = new Set();
