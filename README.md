@@ -3,7 +3,7 @@
 Trabalho Final da matéria de Banco de Dados II do curso de Bacharelado em Ciência da Computação na Universidade Federal de Itajubá (Unifei)
 
 O trabalho é dividido em duas partes:
-- Script para consumir dados da API do GitHub e popular um banco PostgreSQL (diretório `script_api_github`)
+- Script para consumir dados da API do GitHub e popular um banco PostgreSQL (diretório `script_github_api`)
 - Aplicação Ad-hoc baseada no banco previamente populado (diretório `aplicacao_adhoc`)
 
 ## Banco PostgreSQL
@@ -41,3 +41,6 @@ A aplicação é dividida em:
 - Model: realiza o tratamento dos dados e conecta o controller com o DAO
 - DAO: responsável por todas as operações no banco
 - View: a view é dividida em várias rotas HTML com ajuda do Flask
+- Forms: definições dos formulários usados no HTML
+
+O login da aplicação é feita com base no usuário e senha do próprio banco. Além disso, é usada uma chave csrf para simular uma proteção a mais de acesso a aplicação.
