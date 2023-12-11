@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  
+  <!-- Fonts -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/style.css') }}">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.jqueryui.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.3.0/css/scroller.jqueryui.min.css" />
+
+  <!-- Scrollbar Custom CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+  
+  <title>Adhoc Repositories</title>
+</head>
+<body class="page-top">
+  <!-- Page Wrapper -->
+  <div class="wrapper">
+    <!-- Sidebar -->
+    {% include 'sidebar.html' %}
+    <!-- Page Content -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-align-left"></i>
+            <span>Toggle Sidebar</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="row">
+        <div class="container pt-5 adhoc_form">
+          <form method="post" action="{{ url_for('ad_hoc_repository_result') }}" id="queryForm">
+            {{ form.csrf_token }}
+    
+            <div id="selectQueryType">
+              {{ form.query_type.label(class="form_description") }}
+              <span class="error">{{ form.query_type.errors | join("|") }}</span><br/>
+              {{ form.query_type(class="no_bullets form_options", id="queryType") }}
+            </div>
+    
+            <div id="listAllForm" {% if form.query_type.data != 'list_all' %}style="display: none;"{% endif %}>
+              <div>
+                {{ form.select_columns.label(class="form_description") }}
+                <span class="error">{{ form.select_columns.errors | join("|") }}</span><br/>
+                {{ form.select_columns(class="no_bullets form_options") }}
+              </div>
+            </div>
+            
+            <div id="selectByFilterForm" {% if form.query_type.data != 'select_by_filter' %}style="display: none;"{% endif %}>
+              <div>
+                {{ form.select_filter_column.label(class="form_description") }}
+                <span class="error">{{ form.select_filter_column.errors | join("|") }}</span><br/>
+                {{ form.select_filter_column(class="no_bullets form_options") }}
+              </div>
+              <div>
+                {{ form.select_filter_value.label(class="form_description") }}
+                <span class="error">{{ form.select_filter_value.errors | join("|") }}</span><br/>
+                {{ form.select_filter_value(class="no_bullets form_options") }}
+              </div>
+            </div>
+            
+            <div id="multiTableSearchForm" {% if form.query_type.data != 'multi_table_search' %}style="display: none;"{% endif %}>
+              <div>
+                <!-- Adicionar aqui os campos relevantes para a opção multi_table_search -->
+              </div>
+            </div>
+    
+            <div class="form_submit_btn">
+              {{ form.submit() }}
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="dataTable_results">
+        <table id="result_table" class="hover nowrap" style="width: 100%;">
+          <thead>
+            <tr id="tableHeader">
+              <!-- As colunas serão preenchidas dinamicamente pelo JavaScript -->
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- End of Content Wrapper -->
+
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.jqueryui.min.js"></script>
+  <script src="https://cdn.datatables.net/scroller/2.3.0/js/dataTables.scroller.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var dataTable;
+
+      $("#sidebar").mCustomScrollbar({
+        theme: "minimal"
+      });
+    
+      $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+      });
+
+      $('input[name="query_type"]').change(function() {
+        var selectedOption = $(this).val();
+        console.log('selectedOption:', selectedOption);
+    
+        // Oculta ou exibe os formulários com base na opção selecionada
+        $("#listAllForm").toggle(selectedOption === 'list_all');
+        $("#selectByFilterForm").toggle(selectedOption === 'select_by_filter');
+        $("#multiTableSearchForm").toggle(selectedOption === 'multi_table_search');
+      });
+
+      $('#queryForm').submit(function(e) {
+        e.preventDefault();  // Impede o envio tradicional do formulário
+    
+        // Se a DataTable já estiver inicializada, destrua-a antes de recriar
+        if (dataTable) {
+          dataTable.destroy();
+        }
+    
+        // Obtém os dados do formulário
+        var formData = $(this).serializeArray();
+    
+        // Faz uma solicitação AJAX para a rota /ad_hoc_repository/data
+        $.ajax({
+          type: 'POST',
+          url: '/ad_hoc_repository/data',
+          data: formData,
+          headers: {
+            'X-CSRFToken': '{{ form.csrf_token._value() }}'
+          },
+          success: function(response) {
+            console.log(response.aaData);
+    
+            var tableHeader = $('#tableHeader');
+            var tableBody = $('#result_table tbody');
+            tableHeader.empty();
+            tableBody.empty();
+    
+            // Preenche o cabeçalho da tabela com as colunas recebidas
+            for (var i = 0; i < response.columns.length; i++) {
+              tableHeader.append('<th>' + response.columns[i] + '</th>');
+            }
+    
+            // Inicializa a DataTable com os dados recebidos
+            dataTable = $('#result_table').DataTable({
+              data: response.aaData,
+              scrollCollapse: true,
+              pageLength: 10,
+              columns: response.columns.map(function(column) {
+                return { title: column };
+              })
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error("XHR Status:", status);
+            console.error("Error:", error);
+          }
+        });
+
+        // Limpa os dados do formulário após o envio
+        $('#queryForm')[0].reset();
+      });
+    });
+  </script>
+</body>
+
+</html>
