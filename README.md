@@ -10,7 +10,7 @@ O trabalho é dividido em duas partes:
 
 O Modelo Entidade Relacionamento modelado para o banco está apresentado na imagem `MER_GITHUB_API.png`. O SQL referente a criação das tabelas está descrito no arquivo `github_api.sql`, junto com algumas requisições que utilizei durante a criação do banco.
 
-> NOTA: Os dados da API do GitHub são salvos no padrão de um banco orientado à documentos, fiz o tratamento dos dados para que condizesse com o modelo entidade relacionamento.
+> NOTA: Os dados da API do GitHub são salvos no padrão de um banco orientado à documentos, fiz o tratamento dos dados para que condizesse com o modelo relacional do PostgreSQL.
 
 ## Funcionamento do script
 
