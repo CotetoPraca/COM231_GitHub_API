@@ -74,7 +74,7 @@ class Controller:
   @app.route('/ad_hoc_user_account', methods=['GET'])
   def ad_hoc_user_account():
     form = AdHocUserAccountForm()
-    return render_template('ad_hoc_repository.html', form=form)
+    return render_template('ad_hoc_user_account.html', form=form)
   
   @app.route('/ad_hoc_user_account/data', methods=['GET', 'POST'])
   def ad_hoc_user_account_result():
